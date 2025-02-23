@@ -4,12 +4,48 @@ import '../widgets/directory_bar.dart';
 import '../widgets/command_categories.dart';
 import '../widgets/git_credentials_manager.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
+  
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends State<HomeScreen> {
+  bool _isAlwaysOnTop = false;
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.settings),
+          onPressed: () {
+            // Settings action
+          },
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.push_pin_outlined,
+              color: _isAlwaysOnTop ? Colors.green : null,
+            ),
+            onPressed: () async {
+              final isAlwaysOnTop = await windowManager.isAlwaysOnTop();
+              await windowManager.setAlwaysOnTop(!isAlwaysOnTop);
+              setState(() => _isAlwaysOnTop = !isAlwaysOnTop);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.minimize),
+            onPressed: () => windowManager.minimize(),
+          ),
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () => windowManager.close(),
+          ),
+        ],
+      ),
       backgroundColor: Colors.transparent,
       body: Container(
         decoration: BoxDecoration(
@@ -25,59 +61,13 @@ class HomeScreen extends StatelessWidget {
         ),
         child: Column(
           children: [
-            _buildTitleBar(context),
+            // Removido _buildTitleBar(context),
             const DirectoryBar(),
             const Expanded(
               child: CommandCategories(),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildTitleBar(BuildContext context) {
-    return Container(
-      height: 40,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          IconButton(
-            icon: Icon(Icons.settings, color: Theme.of(context).primaryColor),
-            onPressed: () => _showGitSettings(context),
-          ),
-          IconButton(
-            icon: Icon(Icons.close, color: Theme.of(context).primaryColor),
-            onPressed: () => windowManager.close(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showGitSettings(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Git Settings'),
-        content: SizedBox(
-          width: 400,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: const [
-                GitCredentialsManager(),
-              ],
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Fechar'),
-          ),
-        ],
       ),
     );
   }

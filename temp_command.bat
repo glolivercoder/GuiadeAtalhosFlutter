@@ -1,4 +1,4 @@
 @echo off
 cd /d "G:\TRAE VScode\ActionWorkflowFlutter"
-git add .
+git status
 pause
