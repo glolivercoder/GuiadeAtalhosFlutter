@@ -163,9 +163,100 @@ class CommandProvider with ChangeNotifier {
         'description': 'Atualiza todas as dependências',
         'interactive': 'false'
       }
-    ]  // Removed extra ] that was causing the error
+    ],  // Vírgula adicionada aqui
+    'Docker Commands': [
+      {
+        'name': 'List Containers',
+        'command': 'wsl docker ps -a',
+        'description': 'Lista todos os containers',
+        'interactive': 'false'
+      },
+      {
+        'name': 'List Images',
+        'command': 'wsl docker images',
+        'description': 'Lista todas as imagens',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Pull Image',
+        'command': 'wsl docker pull',
+        'description': 'Baixa uma imagem do Docker Hub',
+        'interactive': 'true'
+      },
+      {
+        'name': 'Run Container',
+        'command': 'wsl docker run -d -p',
+        'description': 'Executa um container com porta',
+        'interactive': 'true'
+      },
+      {
+        'name': 'Stop Container',
+        'command': 'wsl docker stop',
+        'description': 'Para um container específico',
+        'interactive': 'true'
+      },
+      {
+        'name': 'Remove Container',
+        'command': 'wsl docker rm',
+        'description': 'Remove um container específico',
+        'interactive': 'true'
+      },
+      {
+        'name': 'Container Logs',
+        'command': 'wsl docker logs -f',
+        'description': 'Mostra logs do container em tempo real',
+        'interactive': 'true'
+      },
+      {
+        'name': 'Execute in Container',
+        'command': 'wsl docker exec -it',
+        'description': 'Executa comando no container',
+        'interactive': 'true'
+      },
+      {
+        'name': 'Build Image',
+        'command': 'wsl docker build -t',
+        'description': 'Constrói uma imagem Docker',
+        'interactive': 'true'
+      },
+      {
+        'name': 'Compose Up',
+        'command': 'wsl docker-compose up -d',
+        'description': 'Inicia todos os serviços',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Compose Down',
+        'command': 'wsl docker-compose down',
+        'description': 'Para e remove todos os serviços',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Compose Build',
+        'command': 'wsl docker-compose build',
+        'description': 'Constrói todos os serviços',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Clean System',
+        'command': 'wsl docker system prune -a --volumes',
+        'description': 'Remove todos recursos não usados',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Network List',
+        'command': 'wsl docker network ls',
+        'description': 'Lista todas as redes Docker',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Volume List',
+        'command': 'wsl docker volume ls',
+        'description': 'Lista todos os volumes Docker',
+        'interactive': 'false'
+      }
     ]
-  };
+  }; // Fechamento do Map commands
 
   void addCategory(String categoryName) {
     if (!commands.containsKey(categoryName)) {
@@ -252,8 +343,7 @@ class CommandProvider with ChangeNotifier {
       }
     }
   }
-
   Future<void> copyToClipboard(String text) async {
     await Clipboard.setData(ClipboardData(text: text));
   }
-}
+} // Fechamento da classe CommandProvider
