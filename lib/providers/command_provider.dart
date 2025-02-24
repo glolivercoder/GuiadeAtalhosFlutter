@@ -6,6 +6,56 @@ import 'dart:convert'; // Added this import for utf8
 class CommandProvider with ChangeNotifier {
   // Removed final to allow modifications
   Map<String, List<Map<String, String>>> commands = {
+    'Git Init Commands': [
+      {
+        'name': 'Init Repository',
+        'command': 'git init',
+        'description': 'Inicializa um novo repositório',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Add Remote',
+        'command': 'git remote add origin',
+        'description': 'Adiciona repositório remoto',
+        'interactive': 'true'
+      },
+      {
+        'name': 'Initial Commit',
+        'command': 'git add . && git commit -m',
+        'description': 'Adiciona todos os arquivos e faz o commit inicial',
+        'interactive': 'true'
+      },
+      {
+        'name': 'Push to Main',
+        'command': 'git push -u origin main',
+        'description': 'Envia para o repositório remoto',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Create Main2 Branch',
+        'command': 'git checkout -b main2',
+        'description': 'Cria e muda para a branch main2',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Push Main2',
+        'command': 'git push -u origin main2',
+        'description': 'Envia a branch main2 para o repositório remoto',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Switch to Main2',
+        'command': 'git checkout main2',
+        'description': 'Muda para a branch main2',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Copy to Main2',
+        'command': 'git checkout main && git pull && git checkout main2 && git merge main',
+        'description': 'Copia o conteúdo da main para main2',
+        'interactive': 'false'
+      }
+    ],
     'Git Commands': [
       {
         'name': 'Git Status',
@@ -81,6 +131,39 @@ class CommandProvider with ChangeNotifier {
         'description': 'Executa o app no Windows',
         'interactive': 'false'
       }
+    ],  // Added missing comma
+    'Flutter Windows Fix': [
+      {
+        'name': 'Clean All',
+        'command': 'flutter clean && rd /s /q build && rd /s /q .dart_tool',
+        'description': 'Limpa todos os arquivos de build',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Remove Windows',
+        'command': 'rd /s /q windows',
+        'description': 'Remove pasta windows atual',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Enable Windows Desktop',
+        'command': 'flutter config --enable-windows-desktop',
+        'description': 'Habilita desenvolvimento Windows',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Recreate Windows',
+        'command': 'flutter create --platforms=windows .',
+        'description': 'Recria arquivos Windows',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Update Dependencies',
+        'command': 'flutter pub get && flutter pub upgrade',
+        'description': 'Atualiza todas as dependências',
+        'interactive': 'false'
+      }
+    ]  // Removed extra ] that was causing the error
     ]
   };
 
