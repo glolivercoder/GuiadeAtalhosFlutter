@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'dart:io';
 import 'dart:convert'; // Added this import for utf8
 import 'directory_provider.dart';
@@ -435,6 +436,15 @@ class CommandProvider with ChangeNotifier {
 
   Future<void> executeCommand(BuildContext context, Map<String, String> commandData) async {
     try {
+      final directoryProvider = Provider.of<DirectoryProvider>(context, listen: false);
+      final workingDirectory = directoryProvider.currentDirectory;
+      
+      if (workingDirectory == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select a working directory first')),
+        );
+        return;
+      }
       if (commandData['interactive'] == 'true') {
         final textController = TextEditingController();
         final result = await showDialog<String>(
@@ -467,6 +477,7 @@ class CommandProvider with ChangeNotifier {
             ['/K', command], // /K keeps the window open
             runInShell: true,
             mode: ProcessStartMode.detached,
+            workingDirectory: workingDirectory,
           );
     
           // Real-time output monitoring
@@ -484,6 +495,7 @@ class CommandProvider with ChangeNotifier {
           ['/K', commandData['command']!], // /K keeps the window open
           runInShell: true,
           mode: ProcessStartMode.detached,
+          workingDirectory: workingDirectory,
         );
     
         // Real-time output monitoring
