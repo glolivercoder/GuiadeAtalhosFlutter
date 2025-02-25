@@ -504,4 +504,27 @@ class CommandProvider with ChangeNotifier {
       }
     }
   }
+
+  Future<void> deleteCommand(String category, Map<String, String> command) async {
+    if (commands.containsKey(category)) {
+      commands[category]?.remove(command);
+      notifyListeners();
+      // Save to file
+      final file = File('assets/commands.json');
+      await file.writeAsString(json.encode(commands));
+    }
+  }
+
+  Future<void> updateCommand(String category, Map<String, String> oldCommand, Map<String, String> newCommand) async {
+    if (commands.containsKey(category)) {
+      final index = commands[category]?.indexOf(oldCommand) ?? -1;
+      if (index != -1) {
+        commands[category]?[index] = newCommand;
+        notifyListeners();
+        // Save to file
+        final file = File('assets/commands.json');
+        await file.writeAsString(json.encode(commands));
+      }
+    }
+  }
 }
