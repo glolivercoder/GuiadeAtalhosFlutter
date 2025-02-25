@@ -55,9 +55,12 @@ class CommandCategories extends StatelessWidget {
                         IconButton(
                           icon: const Icon(Icons.add),
                           onPressed: () {
+                            String? commandName;
+                            String? commandText;
+                            
                             showDialog(
                               context: context,
-                              builder: (context) => AlertDialog(
+                              builder: (BuildContext dialogContext) => AlertDialog(
                                 title: const Text('Novo Comando'),
                                 content: Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -66,31 +69,43 @@ class CommandCategories extends StatelessWidget {
                                       decoration: const InputDecoration(
                                         hintText: 'Nome do comando',
                                       ),
-                                      onChanged: (value) {
-                                        // Store name
-                                      },
+                                      onChanged: (value) => commandName = value,
                                     ),
                                     TextField(
                                       decoration: const InputDecoration(
                                         hintText: 'Comando',
                                       ),
-                                      onChanged: (value) {
-                                        // Store command
-                                      },
+                                      onChanged: (value) => commandText = value,
                                     ),
                                   ],
                                 ),
                                 actions: [
                                   TextButton(
+                                    onPressed: () => Navigator.pop(dialogContext),
+                                    child: const Text('Cancelar'),
+                                  ),
+                                  TextButton(
                                     onPressed: () {
-                                      // Add new command
-                                      commandProvider.addCommand(category, {
-                                        'name': 'New Command',
-                                        'command': 'command',
-                                        'description': 'description',
-                                        'interactive': 'false'
-                                      });
-                                      Navigator.pop(context);
+                                      if (commandName?.isNotEmpty == true && 
+                                          commandText?.isNotEmpty == true) {
+                                        // First close the dialog
+                                        Navigator.pop(dialogContext);
+                                        
+                                        // Then add the command
+                                        commandProvider.addCommand(
+                                          category, 
+                                          {
+                                            'name': commandName!,
+                                            'command': commandText!,
+                                            'description': 'Comando personalizado',
+                                            'interactive': 'false'
+                                          }
+                                        );
+                                        
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('Comando adicionado!')),
+                                        );
+                                      }
                                     },
                                     child: const Text('Adicionar'),
                                   ),
@@ -120,13 +135,19 @@ class CommandCategories extends StatelessWidget {
                             IconButton(
                               icon: const Icon(Icons.play_arrow),
                               onPressed: () async {
-                                await commandProvider.executeCommand(context, command);
+                                await commandProvider.executeCommand(
+                                  context,
+                                  command
+                                );
                               },
                             ),
                           ],
                         ),
                         onTap: () async {
-                          await commandProvider.executeCommand(context, command);
+                          await commandProvider.executeCommand(
+                            context,
+                            command
+                          );
                         },
                       );
                     }).toList(),

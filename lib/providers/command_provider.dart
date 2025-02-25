@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
 import 'dart:convert'; // Added this import for utf8
+import 'directory_provider.dart';
 
 class CommandProvider with ChangeNotifier {
   // Removed final to allow modifications
@@ -255,21 +256,181 @@ class CommandProvider with ChangeNotifier {
         'description': 'Lista todos os volumes Docker',
         'interactive': 'false'
       }
+    ],
+    'NodeJS Commands': [
+      {
+        'name': 'Install Dependencies',
+        'command': 'npm install',
+        'description': 'Install project dependencies',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Start Development',
+        'command': 'npm run dev',
+        'description': 'Start development server',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Build Project',
+        'command': 'npm run build',
+        'description': 'Build project for production',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Run Tests',
+        'command': 'npm test',
+        'description': 'Run test suite',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Create Package',
+        'command': 'npm init',
+        'description': 'Create new package.json',
+        'interactive': 'true'
+      },
+      {
+        'name': 'Add Package',
+        'command': 'npm install',
+        'description': 'Install specific package',
+        'interactive': 'true'
+      },
+      {
+        'name': 'Remove Package',
+        'command': 'npm uninstall',
+        'description': 'Remove specific package',
+        'interactive': 'true'
+      },
+      {
+        'name': 'Update Packages',
+        'command': 'npm update',
+        'description': 'Update all packages',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Run Script',
+        'command': 'npm run',
+        'description': 'Run custom script',
+        'interactive': 'true'
+      },
+      {
+        'name': 'Audit Fix',
+        'command': 'npm audit fix',
+        'description': 'Fix security issues',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Clean Cache',
+        'command': 'npm cache clean --force',
+        'description': 'Clean npm cache',
+        'interactive': 'false'
+      },
+      {
+        'name': 'List Global Packages',
+        'command': 'npm list -g --depth=0',
+        'description': 'List global packages',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Version Check',
+        'command': 'npm -v',
+        'description': 'Check npm version',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Outdated Check',
+        'command': 'npm outdated',
+        'description': 'Check outdated packages',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Publish Package',
+        'command': 'npm publish',
+        'description': 'Publish package to npm',
+        'interactive': 'false'
+      }
+    ],
+    'Git Advanced Commands': [
+      {
+        'name': 'Kill Flutter Windows',
+        'command': 'taskkill /F /IM flutter_windows.dll',
+        'description': 'Force kill Flutter Windows process',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Git Log',
+        'command': 'git log',
+        'description': 'Show commit history',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Stash Changes',
+        'command': 'git stash',
+        'description': 'Temporarily store changes',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Stash Pop',
+        'command': 'git stash pop',
+        'description': 'Apply and remove stashed changes',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Stash List',
+        'command': 'git stash list',
+        'description': 'List all stashed changes',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Stash Clear',
+        'command': 'git stash clear',
+        'description': 'Remove all stashed changes',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Reset Previous',
+        'command': 'git reset --hard HEAD~1',
+        'description': 'Reset to previous commit',
+        'interactive': 'false'
+      },
+      {
+        'name': 'Checkout Commit',
+        'command': 'git checkout',
+        'description': 'Switch to specific commit',
+        'interactive': 'true'
+      },
+      {
+        'name': 'Create Backup Branch',
+        'command': 'git checkout -b backup_branch',
+        'description': 'Create backup branch from commit',
+        'interactive': 'true'
+      }
     ]
   }; // Fechamento do Map commands
-
+  Future<void> loadCommands() async {
+    final file = File('assets/commands.json');
+    final contents = await file.readAsString();
+    commands = Map<String, List<Map<String, String>>>.from(
+      json.decode(contents) as Map<String, dynamic>
+    );
+    notifyListeners();
+  }
   void addCategory(String categoryName) {
     if (!commands.containsKey(categoryName)) {
       commands[categoryName] = [];
       notifyListeners();
     }
   }
-
-  void addCommand(String category, Map<String, String> command) {
+  Future<void> addCommand(String category, Map<String, String> command) async {
     if (commands.containsKey(category)) {
       commands[category]?.add(command);
       notifyListeners();
+      // Save to file
+      final file = File('assets/commands.json');
+      await file.writeAsString(json.encode(commands));
     }
+  }
+  Future<void> copyToClipboard(String command) async {
+    await Clipboard.setData(ClipboardData(text: command));
   }
 
   Future<void> executeCommand(BuildContext context, Map<String, String> commandData) async {
@@ -300,7 +461,7 @@ class CommandProvider with ChangeNotifier {
         );
     
         if (result != null && result.isNotEmpty) {
-          final command = '${commandData['command']} "$result"';
+          final command = '${commandData["command"]} "$result"';
           final process = await Process.start(
             'cmd.exe',
             ['/K', command], // /K keeps the window open
@@ -343,7 +504,4 @@ class CommandProvider with ChangeNotifier {
       }
     }
   }
-  Future<void> copyToClipboard(String text) async {
-    await Clipboard.setData(ClipboardData(text: text));
-  }
-} // Fechamento da classe CommandProvider
+}
